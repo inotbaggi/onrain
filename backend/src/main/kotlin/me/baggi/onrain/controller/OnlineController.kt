@@ -11,12 +11,5 @@ import org.springframework.web.bind.annotation.RestController
 class OnlineController(
     private val serverService: ServerService
 ) {
-    @GetMapping("online/{server}")
-    fun online(@PathVariable server: String): String {
-        serverService.fetchServerInfo(server)
-            .subscribe {
-                println(it)
-            }
-        return "ok"
-    }
+
 }
