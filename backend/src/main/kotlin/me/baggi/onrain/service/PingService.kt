@@ -19,36 +19,34 @@ class PingService(
 ) {
     val pingerClient = WebClient.builder().baseUrl("https://api.mcsrvstat.us/").build()
 
-    fun recordOnlineCheck(ip: String, online: Boolean, date: Date, onlineCount: Int?, max: Int?) {
+    fun recordOnlineCheck(ip: String, serverPing: ServerPing) {
         val server = serverService.getServer(ip) ?: return
 
-        if (onlineCount != null && onlineCount > server.peakOnline) {
-            server.peakOnline = onlineCount
+        if (serverPing.players != null && serverPing.players.online > server.peakOnline) {
+            server.peakOnline = serverPing.players.online
         }
+        server.online = serverPing.players?.online
+        server.imageHash = serverPing.icon
         serverRepository.save(server)
 
         val record = ServerOnlineRecord(
             serverInfo = server,
-            online = online,
+            online = serverPing.online,
             time = LocalDateTime.now(),
-            onlineCount = onlineCount,
-            max = max
+            onlineCount = serverPing.players?.online,
+            max = serverPing.players?.online
         )
         serverOnlineRepository.save(record)
     }
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 15000)
     fun pingServers() {
         println("test")
         serverService.getServers().forEach {
             println("Fetching ${it.id}")
             fetchServerInfo(it.id).subscribe { data ->
                 println("Fetched info: $data")
-                recordOnlineCheck(it.id,
-                    data.online,
-                    Date(),
-                    data.players?.online,
-                    data.players?.max)
+                recordOnlineCheck(it.id, data)
             }
         }
     }

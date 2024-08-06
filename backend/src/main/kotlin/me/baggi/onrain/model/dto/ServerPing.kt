@@ -4,6 +4,7 @@ data class ServerPing(
     val online: Boolean,
     val ip: String?,
     val port: Int?,
+    val icon: String?,
     val version: String?,
     val software: String?,
     val players: PlayersPing?

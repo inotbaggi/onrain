@@ -6,9 +6,10 @@ import me.baggi.onrain.model.request.AddServerRequest
 import me.baggi.onrain.repository.ServerOnlineRepository
 import me.baggi.onrain.repository.ServerRepository
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-
 
 @Service
 class ServerService(
@@ -24,7 +25,7 @@ class ServerService(
             return false
         }
 
-        serverRepository.save(ServerInfo(server.ip, server.port, 0))
+        serverRepository.save(ServerInfo(server.ip, server.port, server.serverName, null, 0, 0))
         return true
     }
 
@@ -32,6 +33,16 @@ class ServerService(
 
     fun getServer(ip: String): ServerInfo? {
         return serverRepository.findById(ip)
+    }
+
+    fun getTopByOnline(count: Int): List<ServerInfo> {
+        val pageable = PageRequest.of(0, count, Sort.by(Sort.Order.desc("online")))
+        return serverRepository.findAll(pageable).toList()
+    }
+
+    fun getTopByPeakOnline(count: Int): List<ServerInfo> {
+        val pageable = PageRequest.of(0, count, Sort.by(Sort.Order.desc("peakOnline")))
+        return serverRepository.findAll(pageable).toList()
     }
 
     fun getOnlineRecordsForLastMinutes(serverId: String, minutes: Long): List<ServerOnlineRecord> {
