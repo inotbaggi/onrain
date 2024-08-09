@@ -1,0 +1,27 @@
+name: Node.js CI
+on:
+  push:
+    branches: [ "master" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up Node.JS
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    - run: npm install
+    - run: npm run build
+    - name: Deploy to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        port: ${{ secrets.PORT }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        source: "./build/*"
+        target: "/root/onrain/frontend"
+        strip_components: 1
+        overwrite: true
