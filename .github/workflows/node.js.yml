@@ -15,13 +15,13 @@ jobs:
     - run: npm install
     - run: npm run build
     - name: Deploy to server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          source: "./build/*"
-          target: "/root/onrain/frontend"
-          strip_components: 1
-          overwrite: true
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        port: ${{ secrets.PORT }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        source: "./build/*"
+        target: "/root/onrain/frontend"
+        strip_components: 1
+        overwrite: true
