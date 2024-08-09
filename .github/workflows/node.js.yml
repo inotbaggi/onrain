@@ -35,8 +35,7 @@ jobs:
           port: ${{ secrets.PORT }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          passphrase: ${{ secrets.PASSHRASE }}
           source: "./build/*"
-          target: "/root/onrain/"
+          target: "/root/onrain/frontend"
           strip_components: 1
           overwrite: true
