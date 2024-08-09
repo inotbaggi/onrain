@@ -17,7 +17,7 @@ jobs:
         node-version: '20.x'
     - run: npm install
     - run: npm run build
-    - run: ls dist
+    - run: ls
     - name: Copy folder content recursively to remote
       uses: garygrossgarten/github-action-scp@release
       with:
