@@ -1,15 +1,14 @@
 package me.baggi.onrain.model
 
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.OneToMany
+import jakarta.persistence.*
 
 @Entity
 data class ServerInfo(
     @Id
-    val id: String,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = -1,
+
+    val ip: String,
     val port: Int,
 
     val serverName: String,
@@ -17,6 +16,7 @@ data class ServerInfo(
     var imageHash: String?,
     var online: Int?,
     var peakOnline: Int,
+    var hideIp: Boolean = false,
 
     @OneToMany(mappedBy = "serverInfo", cascade = [CascadeType.ALL])
     val onlineRecords: List<ServerOnlineRecord> = listOf()

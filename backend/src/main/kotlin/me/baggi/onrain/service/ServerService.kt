@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class ServerService(
@@ -19,20 +20,32 @@ class ServerService(
     val logger = LoggerFactory.getLogger(ServerService::class.java)!!
 
     fun addServer(server: AddServerRequest): Boolean {
-        val data = serverRepository.findById(server.ip)
+        val data = serverRepository.findServerInfoByIp(server.ip)
         if (data != null) {
             logger.warn("Found duplicate ip in database")
             return false
         }
 
-        serverRepository.save(ServerInfo(server.ip, server.port, server.serverName, null, 0, 0))
+        serverRepository.save(ServerInfo(
+            ip = server.ip,
+            port = server.port,
+            serverName = server.serverName,
+            imageHash = null,
+            online = 0,
+            hideIp = server.hideIp,
+            peakOnline = 0
+        ))
         return true
     }
 
     fun getServers(): List<ServerInfo> = serverRepository.findAll().toList()
 
-    fun getServer(ip: String): ServerInfo? {
-        return serverRepository.findById(ip)
+    fun getServerByIp(ip: String): ServerInfo? {
+        return serverRepository.findServerInfoByIp(ip)
+    }
+
+    fun getServer(id: Long): ServerInfo? {
+        return serverRepository.findById(id).getOrNull()
     }
 
     fun getTopByOnline(count: Int): List<ServerInfo> {
@@ -45,21 +58,21 @@ class ServerService(
         return serverRepository.findAll(pageable).toList()
     }
 
-    fun getOnlineRecordsForLastMinutes(serverId: String, minutes: Long): List<ServerOnlineRecord> {
+    fun getOnlineRecordsForLastMinutes(id: Long, minutes: Long): List<ServerOnlineRecord> {
         val startTime = LocalDateTime.now().minusMinutes(minutes)
-        val records = serverOnlineRepository.findRecordsByServerIdAndTimestampAfter(serverId, startTime)
+        val records = serverOnlineRepository.findRecordsByServerIdAndTimestampAfter(id, startTime)
         return records.toList()
     }
 
-    fun getOnlineRecordsForLastDays(serverId: String, days: Long): List<ServerOnlineRecord> {
+    fun getOnlineRecordsForLastDays(id: Long, days: Long): List<ServerOnlineRecord> {
         val startTime = LocalDateTime.now().minusDays(days)
-        val records = serverOnlineRepository.findRecordsByServerIdAndTimestampAfter(serverId, startTime)
+        val records = serverOnlineRepository.findRecordsByServerIdAndTimestampAfter(id, startTime)
         return records.toList()
     }
 
-    fun getOnlineRecordsForLastMonth(serverId: String, months: Long): List<ServerOnlineRecord> {
+    fun getOnlineRecordsForLastMonth(id: Long, months: Long): List<ServerOnlineRecord> {
         val startTime = LocalDateTime.now().minusMonths(months)
-        val records = serverOnlineRepository.findRecordsByServerIdAndTimestampAfter(serverId, startTime)
+        val records = serverOnlineRepository.findRecordsByServerIdAndTimestampAfter(id, startTime)
         return records.toList()
     }
 

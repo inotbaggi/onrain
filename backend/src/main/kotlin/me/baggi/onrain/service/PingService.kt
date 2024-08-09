@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Service
 class PingService(
@@ -20,12 +21,12 @@ class PingService(
     val pingerClient = WebClient.builder().baseUrl("https://api.mcsrvstat.us/").build()
 
     fun recordOnlineCheck(ip: String, serverPing: ServerPing) {
-        val server = serverService.getServer(ip) ?: return
+        val server = serverService.getServerByIp(ip) ?: return
 
         if (serverPing.players != null && serverPing.players.online > server.peakOnline) {
             server.peakOnline = serverPing.players.online
         }
-        server.online = serverPing.players?.online
+        server.online = serverPing.players?.online ?: 0
         server.imageHash = serverPing.icon
         serverRepository.save(server)
 
@@ -33,20 +34,19 @@ class PingService(
             serverInfo = server,
             online = serverPing.online,
             time = LocalDateTime.now(),
-            onlineCount = serverPing.players?.online,
-            max = serverPing.players?.online
+            onlineCount = serverPing.players?.online ?: 0,
+            max = serverPing.players?.max ?: 0
         )
         serverOnlineRepository.save(record)
     }
 
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedDelay = 60000)
     fun pingServers() {
-        println("test")
         serverService.getServers().forEach {
             println("Fetching ${it.id}")
-            fetchServerInfo(it.id).subscribe { data ->
+            fetchServerInfo(it.ip).subscribe { data ->
                 println("Fetched info: $data")
-                recordOnlineCheck(it.id, data)
+                recordOnlineCheck(it.ip, data)
             }
         }
     }

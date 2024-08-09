@@ -20,6 +20,6 @@ export default function CopyIp(data: CopyIpProps) {
     };
     return (
         <p onClick={handleClick}
-           className="bg-white hover:bg-gray-200 cursor-pointer  rounded-2xl text-center text-sm text-black">{renderText}</p>
+           className="bg-white hover:bg-gray-200 cursor-pointer rounded-2xl text-center text-sm text-black">{renderText}</p>
     )
 }

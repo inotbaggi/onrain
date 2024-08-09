@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 interface ServerOnlineRepository : JpaRepository<ServerOnlineRecord, Long> {
     @Query("SELECT r FROM ServerOnlineRecord r WHERE r.time >= :startTime AND r.serverInfo.id = :serverId")
     fun findRecordsByServerIdAndTimestampAfter(
-        @Param("serverId") serverId: String,
+        @Param("serverId") serverId: Long,
         @Param("startTime") startTime: LocalDateTime
     ): List<ServerOnlineRecord>
 
@@ -19,10 +19,9 @@ interface ServerOnlineRepository : JpaRepository<ServerOnlineRecord, Long> {
                 "WHERE r.serverInfo.id = :serverId AND r.time >= :startTime " +
                 "GROUP BY FUNCTION('date_trunc', :interval, r.time) " +
                 "ORDER BY FUNCTION('date_trunc', :interval, r.time)")
-
     fun findAggregatedRecordsByServerIdAndTimestampAfter(
-        @Param("serverId") serverId: String?,
-        @Param("startTime") startTime: LocalDateTime?,
+        @Param("serverId") serverId: Long,
+        @Param("startTime") startTime: LocalDateTime,
         @Param("interval") interval: String?
     ): List<ServerOnlineRecord>
 }

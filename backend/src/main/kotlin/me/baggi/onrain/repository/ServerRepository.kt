@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ServerRepository : JpaRepository<ServerInfo, Long> {
-    fun findById(ip: String): ServerInfo?
+    fun findServerInfoByIp(ip: String): ServerInfo?
 }
