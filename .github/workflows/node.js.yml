@@ -25,6 +25,6 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         source: "./build/*"
-        target: "/root/onrain/frontend"
+        target: "/root/onrain/frontend/"
         strip_components: 1
         overwrite: true
