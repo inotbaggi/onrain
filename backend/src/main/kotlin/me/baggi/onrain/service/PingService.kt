@@ -18,7 +18,10 @@ class PingService(
     private val serverRepository: ServerRepository,
     private val serverOnlineRepository: ServerOnlineRepository
 ) {
-    val pingerClient = WebClient.builder().baseUrl("https://api.mcsrvstat.us/").build()
+    val pingerClient = WebClient.builder()
+        .baseUrl("https://api.ismcserver.online")
+        .defaultHeader("Authorization", "eb0ce0c8-1a3d-486a-bbfb-8eee7005a1d6")
+        .build()
 
     fun recordOnlineCheck(ip: String, serverPing: ServerPing) {
         val server = serverService.getServerByIp(ip) ?: return
@@ -27,7 +30,7 @@ class PingService(
             server.peakOnline = serverPing.players.online
         }
         server.online = serverPing.players?.online ?: 0
-        server.imageHash = serverPing.icon
+        server.imageHash = serverPing.favicon
         serverRepository.save(server)
 
         val record = ServerOnlineRecord(
@@ -40,12 +43,10 @@ class PingService(
         serverOnlineRepository.save(record)
     }
 
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 60000 * 5)
     fun pingServers() {
         serverService.getServers().forEach {
-            println("Fetching ${it.id}")
             fetchServerInfo(it.ip).subscribe { data ->
-                println("Fetched info: $data")
                 recordOnlineCheck(it.ip, data)
             }
         }
@@ -53,7 +54,7 @@ class PingService(
 
     fun fetchServerInfo(ip: String): Mono<ServerPing> {
         return pingerClient.get()
-            .uri("/3/$ip")
+            .uri("/$ip")
             .retrieve()
             .bodyToMono(ServerPing::class.java)
     }

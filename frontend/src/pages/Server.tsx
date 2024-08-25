@@ -65,7 +65,7 @@ export default function Server() {
                 setChartLoading(true);
                 const serverRecords = await getServerRecords(Number(id), period.type);
                 setRecords(serverRecords);
-                message.info(serverRecords.length)
+               // message.info(serverRecords.length)
             } catch (error: any) {
                 console.error('Failed to fetch server records:', error);
                 message.error(`Ошибка получения данных (getServerRecords): ${error.status || error.message || "Unknown error"}`);
@@ -108,7 +108,7 @@ export default function Server() {
                                                 hour: 'numeric',
                                                 minute: 'numeric',
                                                 hourCycle: 'h24',
-                                                timeZone: "UTC"
+                                                timeZone: "Europe/Moscow"
                                             }
                                         )
                                     }

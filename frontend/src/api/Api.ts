@@ -1,7 +1,8 @@
 import {ServerInfo} from "./ServerInfo";
 import {OnlineRecord} from "./OnlineRecord";
 
-const BASE_URL = "http://192.168.0.12:8080/api/v1";
+const BASE_URL = "https://onrain-s.qubixmc.net/api/v1";
+const headers = { 'Content-Type': 'application/json' }
 
 export async function getTopByOnline(count: number): Promise<ServerInfo[]> {
     try {
@@ -9,7 +10,7 @@ export async function getTopByOnline(count: number): Promise<ServerInfo[]> {
         const url = `${BASE_URL}/top/online?count=${count}`;
 
         // Выполняем запрос
-        const response = await fetch(url);
+        const response = await fetch(url, { headers });
 
         // Проверяем успешность ответа
         if (!response.ok) {
@@ -31,7 +32,7 @@ export async function getServerInfo(id: number): Promise<ServerInfo> {
         const url = `${BASE_URL}/server/${id}`;
 
         // Выполняем запрос
-        const response = await fetch(url);
+        const response = await fetch(url, { headers });
 
         // Проверяем успешность ответа
         if (!response.ok) {
@@ -53,7 +54,7 @@ export async function getServerRecords(id: number, type: string): Promise<Online
         const url = `${BASE_URL}/server/records/${id}/${type}`;
 
         // Выполняем запрос
-        const response = await fetch(url);
+        const response = await fetch(url, { headers });
 
         // Проверяем успешность ответа
         if (!response.ok) {

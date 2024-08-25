@@ -12,7 +12,7 @@ data class ServerInfo(
     val port: Int,
 
     val serverName: String,
-    @Column(name = "image_hash", length = 16384)
+    @Column(name = "image_hash", length = 16384 * 8)
     var imageHash: String?,
     var online: Int?,
     var peakOnline: Int,
