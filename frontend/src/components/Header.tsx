@@ -1,9 +1,9 @@
-import {App, Button, Dropdown, MenuProps, message, Space, Tooltip} from "antd";
+import {App, Button, Dropdown, Input, MenuProps, message, Space, Tooltip} from "antd";
 import {
     AppstoreAddOutlined,
     DownOutlined,
     ExclamationCircleOutlined,
-    StarOutlined,
+    StarOutlined, UnorderedListOutlined,
     UserOutlined
 } from '@ant-design/icons';
 import React, {useState} from "react";
@@ -38,6 +38,10 @@ function handleButtonClick(id: string) {
         }
         case "2": {
             window.location.href = "https://qubixmc.net"
+            break
+        }
+        case "4": {
+            window.location.href = "/local"
             break
         }
         case "3": {
@@ -103,6 +107,10 @@ const handleMenuClick: MenuProps['onClick'] = (e) => {
             })
             break
         }
+        case "4": {
+            window.location.href = "/local"
+            break
+        }
         case "2": {
             window.location.href = "https://qubixmc.net"
         }
@@ -110,6 +118,12 @@ const handleMenuClick: MenuProps['onClick'] = (e) => {
 };
 
 const buttons = [
+    {
+        id: "4",
+        named: "Сохраненные сервера",
+        icon: <UnorderedListOutlined/>,
+        danger: false,
+    },
     {
         id: "1",
         named: "Запросить сервер",
@@ -119,7 +133,7 @@ const buttons = [
     {
         named: 'QubixMC',
         id: '2',
-        icon: <StarOutlined />,
+        icon: <StarOutlined/>,
         danger: false,
     },
     {
@@ -133,6 +147,13 @@ const buttons = [
 const menuPropsMobile = {
     items: [
         {
+            label: 'Сохраненные сервера',
+            key: '4',
+            icon: <UnorderedListOutlined key={"dropdown-4"}/>,
+            danger: false,
+            disabled: false,
+        },
+        {
             label: 'Запросить сервер',
             key: '1',
             icon: <AppstoreAddOutlined key={"dropdown-2"}/>,
@@ -142,7 +163,7 @@ const menuPropsMobile = {
         {
             label: 'QubixMC',
             key: '2',
-            icon: <StarOutlined />,
+            icon: <StarOutlined key={"dropdown-3"}/>,
             danger: false,
         },
         {
@@ -162,6 +183,7 @@ export default function Header() {
     return (<header className=" p-4">
         <div className="container mx-auto flex justify-between items-center">
             <a href={"/"} className="text-white text-2xl">Onrain Monitoring</a>
+
             <Dropdown trigger={['click']} className={"md:hidden"} menu={menuPropsMobile}>
                 <Button>
                     <Space>

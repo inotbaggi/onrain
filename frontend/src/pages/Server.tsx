@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import {Button, Card, message, Spin, Typography} from 'antd';
+import {Button, Card, message, Space, Spin, Typography} from 'antd';
 import {Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {ServerInfo} from "../api/ServerInfo";
 import {getServerInfo, getServerRecords} from "../api/Api";
 import {OnlineRecord} from "../api/OnlineRecord";
-import {defaultIcon} from "../AppClass";
+import {addIdToFavorite, defaultIcon, removeIdFromFavorite} from "../AppClass";
+import {StarOutlined} from "@ant-design/icons";
+import {favIds, favIps} from "../AppClass";
 
 const timePeriods = [
     {
@@ -46,11 +48,25 @@ export default function Server() {
     const [data, setData] = useState<ServerInfo | null>(null);
     const [records, setRecords] = useState<OnlineRecord[]>([]);
 
+    const [favorite, setFavorite] = useState(false)
+
+    const onFav = () => {
+        if (favorite) {
+            removeIdFromFavorite(data.id);
+            message.info("Сервер убран из сохраненных!")
+        } else {
+            addIdToFavorite(data.id);
+            message.info("Сервер добавлен в сохраненные!")
+        }
+        setFavorite(favIds.includes(data.id));
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
                 const serverInfo = await getServerInfo(Number(id));
+                setFavorite(favIds.includes(serverInfo.id));
                 setData(serverInfo);
             } catch (error: any) {
                 console.error('Failed to fetch server info:', error);
@@ -65,7 +81,6 @@ export default function Server() {
                 setChartLoading(true);
                 const serverRecords = await getServerRecords(Number(id), period.type);
                 setRecords(serverRecords);
-               // message.info(serverRecords.length)
             } catch (error: any) {
                 console.error('Failed to fetch server records:', error);
                 message.error(`Ошибка получения данных (getServerRecords): ${error.status || error.message || "Unknown error"}`);
@@ -146,6 +161,14 @@ export default function Server() {
                                     </div>
                                     <div>
                                         IP: {data.hideIp ? "Недоступен обычным пользователям" : data.ip}
+                                    </div>
+                                    <div>
+                                        <Button type={favorite ? "default" : "primary"} onClick={onFav}>
+                                            <Space>
+                                                <StarOutlined/>
+                                                {favorite ? "Убрать из сохраненных" : "Добавить в сохраненные"}
+                                            </Space>
+                                        </Button>
                                     </div>
                                 </div>
                             </div>

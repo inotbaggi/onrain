@@ -1,10 +1,21 @@
-import {message, Spin, Typography} from "antd";
+import {Input, message, Spin, Typography} from "antd";
 import Title from "antd/es/typography/Title";
 import Paragraph from "antd/es/typography/Paragraph";
 import GeneralServer from "../components/GeneralServer";
-import {getTopByOnline} from "../api/Api";
+import {getServerInfo, getServerInfoByIp, getTopByOnline} from "../api/Api";
 import {useEffect, useState} from "react";
 import {ServerInfo} from "../api/ServerInfo";
+import {SearchProps} from "antd/es/input";
+
+const {Search} = Input;
+const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+    const serverInfo = await getServerInfoByIp(value)
+    if (serverInfo == "-1") {
+        window.location.href = `/ping/${value}`
+    } else {
+        window.location.href = `/server/${serverInfo}`
+    }
+}
 
 export default function General() {
     const [loading, setLoading] = useState<boolean>(true);
@@ -28,7 +39,28 @@ export default function General() {
     }, [])
 
     return (
-        <div className="p-2 w-full container mx-auto">
+        <div className="p-4 w-full container mx-auto">
+            <div className="flex flex-col items-center justify-center">
+                <div className="mb-2">
+                    <Typography className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold">
+                        Мониторинг онлайна Minecraft серверов
+                    </Typography>
+                </div>
+                <div className="">
+                    <Typography className="text-lg sm:text-lg md:text-xl lg:text-1xl text-gray-400 text-center">
+                        Самый простой способ посмотреть онлайн любого сервера, а также посмотреть лидеров!
+                    </Typography>
+                </div>
+                <div className="mb-2">
+                    <Typography className="text-lg sm:text-lg md:text-xl lg:text-1xl text-gray-400 text-center">
+                        Напиши айпи ниже, чтобы посмотреть онлайн проекта!
+                    </Typography>
+                </div>
+                <div className="mb-6">
+                    <Search placeholder="play.qubixmc.net" onSearch={onSearch}/>
+                </div>
+            </div>
+
             <div className="flex flex-col items-center justify-center">
                 <div className="mb-4">
                     <Typography className="text-xl sm:text-2xl md:text-3xl lg:text-4xl">

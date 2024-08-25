@@ -19,6 +19,11 @@ class ServerController(
         return serverService.getServer(id)?.let { OnlineMapper.INSTANCE.toResponse(it) }
     }
 
+    @GetMapping("/ip/{ip}")
+    fun getServerByIp(@PathVariable ip: String): Long {
+        return serverService.getServerByIp(ip)?.id ?: -1
+    }
+
     @GetMapping("/records/{id}/day")
     fun getDayOnlineRecords(@PathVariable id: Long): List<OnlineRecordResponse> {
         return serverService.getOnlineRecordsForLastDays(id, 1).map { OnlineMapper.INSTANCE.recordToResponse(it) }
