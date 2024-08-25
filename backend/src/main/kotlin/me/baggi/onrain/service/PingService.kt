@@ -19,8 +19,7 @@ class PingService(
     private val serverOnlineRepository: ServerOnlineRepository
 ) {
     val pingerClient = WebClient.builder()
-        .baseUrl("https://api.ismcserver.online")
-        .defaultHeader("Authorization", "eb0ce0c8-1a3d-486a-bbfb-8eee7005a1d6")
+        .baseUrl("https://api.minetools.eu/ping/")
         .build()
 
     fun recordOnlineCheck(ip: String, serverPing: ServerPing) {
@@ -38,7 +37,6 @@ class PingService(
             online = serverPing.online,
             time = LocalDateTime.now(),
             onlineCount = serverPing.players?.online ?: 0,
-            max = serverPing.players?.max ?: 0
         )
         serverOnlineRepository.save(record)
     }
@@ -46,15 +44,15 @@ class PingService(
     @Scheduled(fixedDelay = 60000 * 5)
     fun pingServers() {
         serverService.getServers().forEach {
-            fetchServerInfo(it.ip).subscribe { data ->
+            fetchServerInfo(it.ip, it.port).subscribe { data ->
                 recordOnlineCheck(it.ip, data)
             }
         }
     }
 
-    fun fetchServerInfo(ip: String): Mono<ServerPing> {
+    fun fetchServerInfo(ip: String, port: Int): Mono<ServerPing> {
         return pingerClient.get()
-            .uri("/$ip")
+            .uri("$ip/$port")
             .retrieve()
             .bodyToMono(ServerPing::class.java)
     }

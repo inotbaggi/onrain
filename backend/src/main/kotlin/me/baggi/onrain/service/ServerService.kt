@@ -60,20 +60,19 @@ class ServerService(
 
     fun getOnlineRecordsForLastMinutes(id: Long, minutes: Long): List<ServerOnlineRecord> {
         val startTime = LocalDateTime.now().minusMinutes(minutes)
-        val records = serverOnlineRepository.findRecordsByServerIdAndTimestampAfter(id, startTime)
+        val records = serverOnlineRepository.findByServerInfoIdAndTimeAfter(id, startTime)
         return records.toList()
     }
 
     fun getOnlineRecordsForLastDays(id: Long, days: Long): List<ServerOnlineRecord> {
         val startTime = LocalDateTime.now().minusDays(days)
-        val records = serverOnlineRepository.findRecordsByServerIdAndTimestampAfter(id, startTime)
+        val records = serverOnlineRepository.findByServerInfoIdAndTimeAfter(id, startTime)
         return records.toList()
     }
 
     fun getOnlineRecordsForLastMonth(id: Long, months: Long): List<ServerOnlineRecord> {
         val startTime = LocalDateTime.now().minusMonths(months)
-        val records = serverOnlineRepository.findRecordsByServerIdAndTimestampAfter(id, startTime)
+        val records = serverOnlineRepository.findByServerInfoIdAndTimeAfter(id, startTime)
         return records.toList()
     }
-
 }

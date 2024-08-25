@@ -16,5 +16,4 @@ data class ServerOnlineRecord(
     val online: Boolean,
     val time: LocalDateTime,
     val onlineCount: Int?, // nullable if offline
-    val max: Int?
 )
